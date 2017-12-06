@@ -1,4 +1,6 @@
-# Mes15FilmsPréférés
+# #Mes15FilmsPréférés
+
+Side project pour analyser la liste des tweets à partir du hashtag #Mes15FilmsPréférés (qui n'a même pas "trendé" :-/)
 
 ## Installation
 

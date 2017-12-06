@@ -12,6 +12,7 @@ const getContent = async ({ raw = false, newPath = null } = {}) => {
     // console.log("<< #getContent", raw);
     return json;
   } catch (e) {
+    return {};
     throw `#getContent e: ${e}`;
   }
 };

@@ -1,36 +1,131 @@
 require("dotenv").config();
 const fetch = require("isomorphic-fetch");
+const qs = require("qs");
+const _ = require("lodash");
 const API_KEY = process.env.TMDB_API_KEY;
 
 const fs = require("./src/fs");
-const TMDB_PATH = "./dump/tmdb.json";
+const TMDB_SEARCH_PATH = "./dump/tmdb_search.json";
+const TMDB_MOVIES_PATH = "./dump/tmdb_movies.json";
+const TMDB_CREDITS_PATH = "./dump/tmdb_credits.json";
 const TOP_MOVIES_PATH = "./dump/orderedMovies.json";
 
-const getMovie = async search => {
-  const url = `http://api.themoviedb.org/3/search/movie?query=${
-    search
-  }&api_key=${API_KEY}`;
-  console.log("url", url);
-  const res = await fetch(url);
-  const json = await res.json();
-  const movie = json.results[0] || [];
+const rootUrl = "http://api.themoviedb.org/3";
+
+const searchMovie = async searchTerm => {
+  const url = `/search/movie/`;
+  const json = await load({
+    url,
+    query: {
+      query: searchTerm
+    }
+  });
+  const movies = json.results;
+  const movie = movies[0];
   return movie;
 };
 
-(async () => {
-  const topMovies = await fs.getContent({ newPath: TOP_MOVIES_PATH });
-  const tmdb = await fs.getContent({ newPath: TMDB_PATH });
-  const tmdbKeys = Object.keys(tmdb);
-  let movieSearchTerm = null;
-  topMovies.forEach(movie => {
-    if (tmdbKeys.indexOf(movie.name) === -1) {
-      if (movieSearchTerm === null) {
-        movieSearchTerm = movie.name;
+const getMovieById = async id => {
+  const url = `/movie/${id}`;
+  const movie = await load({
+    url
+  });
+  return movie;
+};
+
+const getMovieCreditsById = async id => {
+  const url = `/movie/${id}/credits`;
+  const credits = await load({
+    url
+  });
+  return credits;
+};
+
+const load = async ({ url, query = {} } = {}) => {
+  query.api_key = API_KEY;
+  const fullUrl = `${rootUrl}${url}?${qs.stringify(query)}`;
+  // console.log("#load fullUrl", fullUrl);
+  const res = await fetch(fullUrl);
+  const json = await res.json();
+  return json;
+};
+
+const getUnfetchedMovie = ({ list, fetched }) => {
+  const fetchedKeys = Object.keys(fetched);
+  let unfetchedMovie = null;
+  list.forEach(movie => {
+    if (fetchedKeys.indexOf(movie.name) === -1) {
+      if (unfetchedMovie === null) {
+        unfetchedMovie = movie.name;
       }
     }
   });
-  // console.log("topMovies", movieSearchTerm);
-  const movie = await getMovie(movieSearchTerm);
-  tmdb[movieSearchTerm] = movie;
-  await fs.saveContent(tmdb, { newPath: TMDB_PATH });
+  return unfetchedMovie;
+};
+
+const getMoviesToSearch = async () => {
+  const topMovies = await fs.getContent({ newPath: TOP_MOVIES_PATH });
+  const names = topMovies.map(m => m.name);
+  return names;
+};
+
+const getMoviesSearched = async () => {
+  const tmdbSearch = await fs.getContent({ newPath: TMDB_SEARCH_PATH });
+  return Object.keys(tmdbSearch);
+};
+
+const getNextMovieDetails = async movieSearchTerm => {
+  try {
+    const tmdbSearch = await fs.getContent({ newPath: TMDB_SEARCH_PATH });
+    const tmdbMovies = await fs.getContent({ newPath: TMDB_MOVIES_PATH });
+    const tmdbCredits = await fs.getContent({ newPath: TMDB_CREDITS_PATH });
+
+    console.log(`START ${movieSearchTerm}...`);
+    const movie = await searchMovie(movieSearchTerm);
+    if (movie.hasOwnProperty("id") === false) {
+      throw `Movie ID for [${movieSearchTerm}] has not been found`;
+    }
+    const movieId = movie.id;
+    const movieDetails = await getMovieById(movieId);
+    const credits = await getMovieCreditsById(movieId);
+
+    tmdbSearch[movieSearchTerm] = movie;
+    tmdbMovies[movieSearchTerm] = movieDetails;
+    tmdbCredits[movieSearchTerm] = credits;
+
+    await fs.saveContent(tmdbSearch, { newPath: TMDB_SEARCH_PATH });
+    await fs.saveContent(tmdbMovies, { newPath: TMDB_MOVIES_PATH });
+    await fs.saveContent(tmdbCredits, { newPath: TMDB_CREDITS_PATH });
+    console.log(`END ${movieSearchTerm}...`);
+  } catch (e) {
+    throw e;
+  }
+};
+
+// https://stackoverflow.com/a/43082995/185771
+
+const sleep = ms => {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+};
+
+const delayedSearch = async search => {
+  console.log("Waiting...");
+  await sleep(3000);
+  await getNextMovieDetails(search);
+};
+
+(async () => {
+  const movies = await getMoviesToSearch();
+  const moviesSearched = await getMoviesSearched();
+  // await getNextMovieDetails("pulp fiction");
+  const moviesToSearch = _.difference(movies, moviesSearched);
+  moviesToSearch.reduce(
+    (p, x) => p.then(_ => delayedSearch(x)),
+    Promise.resolve()
+  );
+  // console.log(moviesToSearch);
+  // console.log(moviesToSearch.length);
+  // console.log(movies.length);
 })();

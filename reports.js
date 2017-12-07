@@ -141,6 +141,14 @@ const printCountriesRepresentation = async () => {
   });
 };
 
+const printMostVotedFrenchMovies = async () => {
+  await printMaster({
+    name: "most_voted_french_movies",
+    sorterFn: sorter.movieInFrance,
+    rowFn: getMoviesToRows
+  });
+};
+
 const printMostVotedDirector = async () => {
   await printMaster({
     name: "most_voted_director",
@@ -177,4 +185,5 @@ const printMaster = async ({ name, sorterFn, rowFn }) => {
   await printBestRating();
   await printCountriesRepresentation();
   await printMostVotedDirector();
+  await printMostVotedFrenchMovies();
 })();

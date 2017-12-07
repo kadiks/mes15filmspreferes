@@ -220,7 +220,10 @@ const reassignedMovies = {
   "amour et amnesie": "50 first dates",
   "20 battements par minute": "120 battements par minute",
   "a bronx tale": "il etait une fois le bronx",
-  "inglorious bastard": "inglorious basterds"
+  "inglorious bastard": "inglorious basterds",
+  lahaut: "up",
+  "87 code meurtre": "187 code meurtre",
+  dictateur: "great dictator"
 };
 
 // const regex = new RegExp(
@@ -231,7 +234,7 @@ const reassignedMovies = {
 //   "[1|2|3|4|5|6|7|8|9|10|11|12|13|14|15]?[-]?([\\w'\\. -])+[\\(\\w \\)]*\\\n",
 //   "gi"
 // );
-const regex = /[1|2|3|4|5|6|7|8|9|10|11|12|13|14|15]?[-|\.|*]?([\w'\. -])+[\(\w \)]*\n/gi;
+const regex = /[1|2|3|4|5|6|7|8|9|10|11|12|13|14|15]?[-|\.|*]?([\w'\. ,-])+[\(\w \)]*\n/gi;
 // const regex = new RegExp("([\\w'\\. ])+", "gi");
 
 const makeTop = (movies, max = 5) => {
@@ -330,6 +333,7 @@ const addMovie = (movie, screen_name) => {
         movie = movie.replace(/[\*][ ]?/, ""); // star removal
         movie = movie.replace(/[_][ ]?/, ""); // underscore removal
         movie = movie.replace(/\([\w ]+\)/, ""); // parenthsis removal
+        movie = movie.replace(/,/g, ""); // comma removal
         movie = movie.trim();
         movie = movie.toLowerCase();
         movie = movie

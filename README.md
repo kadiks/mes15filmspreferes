@@ -1,14 +1,16 @@
 # #Mes15FilmsPréférés
 
+[http://blog.jenaiccambre.com/2017/12/07/mes15filmspreferes-les-stats/](http://blog.jenaiccambre.com/2017/12/07/mes15filmspreferes-les-stats/)
+
 Side project pour analyser la liste des tweets à partir du hashtag
 [#Mes15FilmsPréférés](https://twitter.com/hashtag/mes15filmspreferes?f=tweets&vertical=default&src=hash)
-(qui n'a même pas "trendé" :-/)
+(qui n'a même pas fait partie des "tendances" :-/)
 
 ## Installation
 
 ### Prérequis
 
-* Installer [Node.JS](https://nodejs.org/en/) 7+
+* Installer [Node.JS](https://nodejs.org/en/) 8+
 * Créer un compte [Twitter](https://twitter.com/)
 * Créer un compte [TMDb](https://www.themoviedb.org/?language=en)
 
@@ -47,4 +49,6 @@ TMDB_API_KEY=xxx
    film (réalisateur, acteurs, genre et bien plus)
 
 1. Lancez la commande : `node report` qui vous donnera le format de reporting
-   que j'ai utilisé pour le blog.
+   que j'ai utilisé pour le
+   [blog](http://blog.jenaiccambre.com/2017/12/07/mes15filmspreferes-les-stats/)
+   (dans le dossier `reports`)

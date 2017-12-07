@@ -43,8 +43,8 @@ TMDB_API_KEY=xxx
 1. Lancez ensuite la commande : `node extract_movies` qui va ordonner les
    résultats dans un JSON
 
-1. Lancez la commande 15 fois : `node fetchDetails` jusqu'à avoir les 15
-   premiers titres (ou plus pour avoir la totalité)
+1. Lancez la commande : `node fetchDetails` qui va ajouter des données sur le
+   film (réalisateur, acteurs, genre et bien plus)
 
 1. Lancez la commande : `node report` qui vous donnera le format de reporting
    que j'ai utilisé pour le blog.

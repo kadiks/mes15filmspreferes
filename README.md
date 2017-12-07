@@ -40,7 +40,8 @@ TMDB_API_KEY=xxx
 1. Tapez dans l'invite de commande : `npm install` pour installer tous les
    packages nécessaires
 
-1. Lancez la commande : `node index` jusqu'à voir la mention (`No more tweets`)
+1. Lancez la commande : `node index` plusieurs fois jusqu'à voir la mention (`No
+   more tweets`)
 
 1. Lancez ensuite la commande : `node extract_movies` qui va ordonner les
    résultats dans un JSON

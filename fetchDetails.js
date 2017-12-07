@@ -74,14 +74,30 @@ const getMoviesSearched = async () => {
   return Object.keys(tmdbSearch);
 };
 
+const getMovieCount = async movieName => {
+  const topMovies = await fs.getContent({ newPath: TOP_MOVIES_PATH });
+  let selectedMovie = null;
+  topMovies.forEach(movie => {
+    if (movie.name === movieName) {
+      selectedMovie = movie;
+    }
+  });
+
+  return selectedMovie.count;
+};
+
 const getNextMovieDetails = async movieSearchTerm => {
   try {
     const tmdbSearch = await fs.getContent({ newPath: TMDB_SEARCH_PATH });
     const tmdbMovies = await fs.getContent({ newPath: TMDB_MOVIES_PATH });
     const tmdbCredits = await fs.getContent({ newPath: TMDB_CREDITS_PATH });
 
-    console.log(`START ${movieSearchTerm}...`);
-    const movie = await searchMovie(movieSearchTerm);
+    const movieCount = await getMovieCount(movieSearchTerm);
+    if (movieCount === 1) {
+      throw `Movie [${movieSearchTerm}] has too low count to be searchable`;
+    }
+    console.log(`START ${movieSearchTerm} (${movieCount} votes)...`);
+    const movie = (await searchMovie(movieSearchTerm)) || {};
     if (movie.hasOwnProperty("id") === false) {
       throw `Movie ID for [${movieSearchTerm}] has not been found`;
     }

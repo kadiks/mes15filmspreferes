@@ -8,6 +8,7 @@
 
 ## npm files to ignore
 .env
-dump/
+dump/*
+reports/*
 node_modules/*
 npm-debug.log

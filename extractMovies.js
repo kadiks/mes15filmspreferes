@@ -18,11 +18,15 @@ const blackListMovies = [
   ")",
   "voila mon top 3 des tops",
   "jouelacommebonello",
-  "j'vais en faire 10 mdr)"
+  "j'vais en faire 10 mdr)",
+  "rockyramacrue",
+  "trilogie cornetto",
+  "tuches"
 ];
 const reassignedMovies = {
   lalaland: "la la land",
   "la land": "la la land",
+  "lala land": "la la land",
   "amelie poulain": "fabuleux destin d'amelie poulain",
   "001": "2001 l'odyssee de l'espace",
   "2001": "2001 l'odyssee de l'espace",
@@ -53,6 +57,7 @@ const reassignedMovies = {
   "00) days of summer": "500 days of summer",
   "500 jours ensemble": "500 days of summer",
   "fury road": "mad max fury road",
+  madmaxfuryroad: "mad max fury road",
   "mad max 2": "mad max fury road",
   "mad max ii": "mad max fury road",
   "madmax fury road": "mad max fury road",
@@ -74,6 +79,8 @@ const reassignedMovies = {
   "empire strikes back": "star wars 5",
   "retour du jedi": "star wars 6",
   "un nouvel espoir": "star wars 4",
+  "a new hope": "star wars 4",
+  "revanche des sith": "star wars 3",
   "avengers 2": "avengers l'ere d'ultron",
   "l'ere d'ultron": "avengers l'ere d'ultron",
   ultron: "avengers l'ere d'ultron",
@@ -85,22 +92,28 @@ const reassignedMovies = {
     "eternal sunshine of the spotless mind",
   "scott pilgrim": "scott pilgrim vs the world",
   miles: "8 miles",
-  "rencontres du 3e type": "rencontres du 3eme type",
-  "rencontres du troisieme type": "rencontres du 3eme type",
-  "rencontre du 3e type": "rencontres du 3eme type",
-  "rencontre du troisieme type": "rencontres du 3eme type",
+  "rencontres du 3e type": "rencontres du troisieme type",
+  "rencontres du 3eme type": "rencontres du troisieme type",
+  "rencontre du 3e type": "rencontres du troisieme type",
+  "rencontre du troisieme type": "rencontres du troisieme type",
+  "rencontre du 3eme type": "rencontres du troisieme type",
   "schindler's list": "liste de schindler",
+  "liste de shindler": "liste de schindler",
   "godfather 2": "parrain 2",
   "parrain ii": "parrain 2",
   "parrain 1": "parrain",
   godfather: "parrain",
   "spider man 2": "spiderman 2",
   "spider man": "spiderman",
+  "spider-man": "spiderman",
   shinning: "shining",
   "narnia 1": "monde de narnia",
   "kill bill volume 1": "kill bill",
   "kill bill 1": "kill bill",
   "kill bill volume 2": "kill bill 2",
+  "kill bill 1et2": "kill bill",
+  "kill bill vol1 et 2": "kill bill",
+  "kill bill vol 1 et 2": "kill bill",
   "1 grammes": "21 grammes",
   nemo: "monde de nemo",
   "finding nemo": "monde de nemo",
@@ -119,9 +132,11 @@ const reassignedMovies = {
   "scary movie 1": "scary movie",
   wonderwoman: "wonder woman",
   "dark knigt": "dark knight",
+  "dark night": "dark knight",
   "batman the dark knight": "dark knight",
   "indiana jones iii": "indiana jones 3",
   "indiana jones et le temple maudit": "indiana jones 2",
+  "indy et le temple maudit": "indiana jones 2",
   "indiana jones et la derniere croisade": "indiana jones 3",
   "raiders of the lost ark": "aventuriers de l'arche perdue",
   "inglorious bastards": "inglorious basterds",
@@ -163,6 +178,7 @@ const reassignedMovies = {
   "forest gump": "forrest gump",
   "deer hunter": "voyage au bout de l'enfer",
   "singin' in the rain": "chantons sous la pluie",
+  "singin in the rain": "chantons sous la pluie",
   "usual suspect": "usual suspects",
   cie: "monstres et cie",
   mrnobody: "mr nobody",
@@ -173,7 +189,38 @@ const reassignedMovies = {
   "jurassik park": "jurassic park",
   oldboy: "old boy",
   "a clockwork orange": "orange mecanique",
-  
+  "l'etrange noel de mr jack": "l'etrange noel de m jack",
+  "l'etrange noel de monsieur jack": "l'etrange noel de m jack",
+  psycho: "psychose",
+  "captain america civil war": "captain america 3",
+  "captain america le soldat de l'hiver": "captain america 2",
+  unbreakable: "incassable",
+  "big lebowsky": "big lebowski",
+  "mullholand drive": "mulholland drive",
+  "green mile": "ligne verte",
+  "barry lindon": "barry lyndon",
+  "au revoir lahaut": "au revoir la haut",
+  "josey wales horsla-loi": "josey wales",
+  "dances with wolves": "danse avec les loups",
+  "newyork 1997": "new-york 1997",
+  "alice aux pays des merveilles": "alice au pays des merveilles",
+  "slumdog millionnaire": "slumdog millionaire",
+  "americain history x": "american history x",
+  "night of the hunter": "nuit du chasseur",
+  "royal tenenbaum": "famille tenenbaum",
+  rhps: "rocky horror picture show",
+  "billy eliott": "billy elliot",
+  "lion king": "roi lion",
+  "almost famous": "presque celebre",
+  "wall-e": "walle",
+  "mean girls": "lolita malgre moi",
+  "0 nuances de grey": "50 nuances de grey",
+  "catch me if you can": "arrete moi si tu peux",
+  "once upon a time in the west": "il etait une fois dans l'ouest",
+  "amour et amnesie": "50 first dates",
+  "20 battements par minute": "120 battements par minute",
+  "a bronx tale": "il etait une fois le bronx",
+  "inglorious bastard": "inglorious basterds"
 };
 
 // const regex = new RegExp(
@@ -224,6 +271,10 @@ const addMovie = (movie, screen_name) => {
   const moviesKey = movies.map(m => m.name);
   const movieIndex = moviesKey.indexOf(movie);
   if (movieIndex >= 0) {
+    // if user already added the movie
+    if (movies[movieIndex].users.indexOf(screen_name) >= 0) {
+      return;
+    }
     const el = movies[movieIndex];
     el.count = el.count + 1;
     el.users.push(screen_name);
@@ -233,7 +284,16 @@ const addMovie = (movie, screen_name) => {
 };
 
 (async () => {
+  const data = {
+    total: 0,
+    decoded: 0,
+    movies: 0,
+    participants: 0,
+    users: []
+  };
   const rawTweets = await fs.getContent({ raw: true });
+
+  data.total = rawTweets.length;
 
   rawTweets.forEach(rawTweet => {
     if (rawTweet.hasOwnProperty("full_text") === false) {
@@ -248,12 +308,18 @@ const addMovie = (movie, screen_name) => {
     }
     processedTweetIds.push(tweetId);
     // console.log(rawTweet.full_text);
-    const text = slug(rawTweet.full_text);
+    let text = slug(rawTweet.full_text);
+    text = text.replace(/’/g, "'"); // annoying french character
+    text = text.replace(/&amp;/g, "et"); // annoying french character
     const screen_name = rawTweet.user.screen_name;
     // console.log(text);
     const matches = text.match(regex);
     // const match = regex.exec(text);
     if (matches !== null) {
+      data.decoded += 1;
+      if (data.users.indexOf(screen_name) === -1) {
+        data.users.push(screen_name);
+      }
       // console.log(matches);
       const movies = matches.map(match => {
         let movie = match.replace("\n", ""); // break line removal
@@ -276,13 +342,20 @@ const addMovie = (movie, screen_name) => {
       // process.exit();
     }
   });
-  const orderedMovies = orderMovies(movies);
+  data.participants = data.users.length;
+  const rawOrderedMovies = orderMovies(movies);
+  const orderedMovies = rawOrderedMovies.filter(m => m.count > 1);
+  data.movies = orderedMovies.length;
   const topMovies = makeTop(orderedMovies, 20);
   console.log("movies", topMovies);
   const orderedTitles = orderedMovies.map(movie => ({ name: movie.name }));
   await fs.saveContent(orderedMovies, { newPath: "./dump/orderedMovies.json" });
+  await fs.saveContent(rawOrderedMovies, {
+    newPath: "./dump/rawOrderedMovies.json"
+  });
   await fs.saveContent(orderedTitles, { newPath: "./dump/orderedTitles.json" });
   await fs.saveContent(topMovies, { newPath: "./dump/topMovies.json" });
+  await fs.saveContent(data, { newPath: "./dump/data.json" });
 
   // await fsE.writeFile(
   //   "./dump/orderedMovies.json",

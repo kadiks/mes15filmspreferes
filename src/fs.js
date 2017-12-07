@@ -32,7 +32,12 @@ const saveContent = async (json, { raw = false, newPath = null } = {}) => {
   }
 };
 
+const save = async ({ path, content }) => {
+  await fs.writeFile(path, content, "utf8");
+};
+
 module.exports = {
   getContent,
-  saveContent
+  saveContent,
+  save
 };

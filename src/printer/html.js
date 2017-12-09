@@ -14,8 +14,11 @@ const printHtml = async ({ rows, name, top }) => {
     let fmtRow = null;
     keys.forEach(key => {
       let currentValue = r[key];
-      if (key === "poster") {
-        currentValue = `<img src="${IMG_ROOT}${currentValue}" alt="${
+      if (key === 'poster') {
+        currentValue = `${IMG_ROOT}${currentValue}`;
+      }
+      if (key === "poster" || key === 'image') {
+        currentValue = `<img src="${currentValue}" alt="${
           r.title
         }" style="max-width: 100px;" />`;
       }

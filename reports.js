@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const fs = require("./src/fs");
-const printMd = require("./src/printer/markdown");
-const printHtml = require("./src/printer/html");
+const printer = require("./src/printer/");
 const sorter = require("./src/sorter");
 
 const DEFAULT_TOP = 15;
@@ -9,12 +8,13 @@ const MAX_TOP = 100;
 
 const printAll = async ({ rows, name, top }) => {
   // console.log("#printAll rows", rows);
-  await printMd({ rows, name, top: 3 });
-  await printMd({ rows, name, top });
-  await printMd({ rows, name, top: MAX_TOP });
-  await printHtml({ rows, name, top: 3 });
-  await printHtml({ rows, name, top });
-  await printHtml({ rows, name, top: MAX_TOP });
+  // await printer.markdown({ rows, name, top: 3 });
+  // await printer.markdown({ rows, name, top });
+  // await printer.markdown({ rows, name, top: MAX_TOP });
+  await printer.text({ rows, name, top });
+  await printer.html({ rows, name, top: 3 });
+  await printer.html({ rows, name, top });
+  await printer.html({ rows, name, top: MAX_TOP });
 };
 
 const getMoviesByNames = async ({ movieNames }) => {
@@ -30,13 +30,16 @@ const getMoviesByNames = async ({ movieNames }) => {
   const orderedMovies = await fs.getContent({
     newPath: "./dump/orderedMovies.json"
   });
+  const data = await fs.getContent({
+    newPath: "./dump/data.json"
+  });
   return orderedMovies.map(movie => {
     const name = movie.name;
     const search = tmdbSearch[name] || {};
     const details = tmdbMovies[name] || {};
     const credits = tmdbCredits[name] || {};
     const twitter = movie || {};
-    return { search, details, credits, twitter };
+    return { search, details, credits, twitter, data };
   });
 };
 
@@ -59,27 +62,6 @@ const getDirectorFromCrew = ({ crew = [] }) => {
   });
   return director;
 };
-
-// const getDirectorsToRows = ({ movies }) => {
-//   const mdRows = movies.map((movie, index) => {
-//     const { credits, twitter, search, details } = movies;
-//     const { count } = twitter;
-//     const { crew, cast } = credits;
-//     const { name = "", poster_path } = getDirectorFromCrew({ crew });
-
-//     const poster = `${IMG_ROOT}${poster_path}`;
-
-//     const row = {
-//       num: index + 1,
-//       name,
-//       title,
-//       count: `${count} votes`
-//     };
-//     return row;
-//   });
-//   // console.log("#getMoviesToRows mdRows", mdRows.length);
-//   return mdRows;
-// };
 
 const getMoviesToRows = ({ movies }) => {
   // console.log("#getMoviesToRows movies", movies);
@@ -141,10 +123,50 @@ const printCountriesRepresentation = async () => {
   });
 };
 
+const printGenreRepresentation = async () => {
+  await printMaster({
+    name: "genre_representation",
+    sorterFn: sorter.moviesByGenre,
+    rowFn: getDataToRows
+  });
+};
+
+const printDecadeRepresentation = async () => {
+  await printMaster({
+    name: "decade_representation",
+    sorterFn: sorter.moviesByDecade,
+    rowFn: getDataToRows
+  });
+};
+
 const printMostVotedFrenchMovies = async () => {
   await printMaster({
     name: "most_voted_french_movies",
     sorterFn: sorter.movieInFrance,
+    rowFn: getMoviesToRows
+  });
+};
+
+const printMostFancyUsers = async () => {
+  await printMaster({
+    name: "most_fancy_users",
+    sorterFn: sorter.votersByAverageMovieDesc,
+    rowFn: getDataToRows
+  });
+};
+
+const printMostTrollingUsers = async () => {
+  await printMaster({
+    name: "most_trolling_users",
+    sorterFn: sorter.votersByAverageMovieAsc,
+    rowFn: getDataToRows
+  });
+};
+
+const printMostVotedByGenre = async ({ genre }) => {
+  await printMaster({
+    name: `most_voted_by_genre_${genre}`,
+    sorterFn: sorter.movieByGenre[genre],
     rowFn: getMoviesToRows
   });
 };
@@ -184,6 +206,32 @@ const printMaster = async ({ name, sorterFn, rowFn }) => {
   await printMostVoted();
   await printBestRating();
   await printCountriesRepresentation();
+  await printGenreRepresentation();
+  await printDecadeRepresentation();
   await printMostVotedDirector();
   await printMostVotedFrenchMovies();
+  await printMostFancyUsers();
+  await printMostTrollingUsers();
+  const genres = [
+    "action",
+    "adventure",
+    "animation",
+    "comedy",
+    "crime",
+    "documentary",
+    "drama",
+    "family",
+    "fantasy",
+    "history",
+    "horror",
+    "music",
+    "mystery",
+    "romance",
+    "science fiction",
+    "tv movie",
+    "thriller",
+    "war",
+    "western"
+  ];
+  await Promise.all(genres.map(genre => printMostVotedByGenre({ genre })));
 })();

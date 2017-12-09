@@ -40,16 +40,17 @@ TMDB_API_KEY=xxx
 1. Tapez dans l'invite de commande : `npm install` pour installer tous les
    packages nécessaires
 
-1. Lancez la commande : `node index` plusieurs fois jusqu'à voir la mention (`No
-   more tweets`)
+1. Lancez la commande : `npm run fetch-tweets` plusieurs fois jusqu'à voir la
+   mention (`No more tweets`)
 
-1. Lancez ensuite la commande : `node extract_movies` qui va ordonner les
+1. Lancez ensuite la commande : `npm run extract-movies` qui va ordonner les
    résultats dans un JSON
 
-1. Lancez la commande : `node fetchDetails` qui va ajouter des données sur le
-   film (réalisateur, acteurs, genre et bien plus)
+1. Lancez la commande : `npm run fetch-info` qui va ajouter des données sur le
+   film (réalisateur, acteurs, genre et bien plus) (attention ça va prendre des
+   heures !!!)
 
-1. Lancez la commande : `node report` qui vous donnera le format de reporting
-   que j'ai utilisé pour le
+1. Lancez la commande : `npm run reporting` qui vous donnera le format de
+   reporting que j'ai utilisé pour le
    [blog](http://blog.jenaiccambre.com/2017/12/07/mes15filmspreferes-les-stats/)
    (dans le dossier `reports`)
